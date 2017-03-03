@@ -1,0 +1,39 @@
+{
+  "name": "ri.js",
+  "version": "0.1.0",
+  "description": "ri=request interceptor；提供一种拦截request（异步或同步的网络请求、文件读写等等）的能力。",
+  "main": "dist/index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "mocha test/index.js",
+    "build": "node build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imingyu/ri.js.git"
+  },
+  "keywords": [
+    "ri.js",
+    "request",
+    "interceptor",
+    "request-interceptors"
+  ],
+  "author": "Mingyu <mingyuhisoft@163.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imingyu/ri.js/issues"
+  },
+  "homepage": "https://github.com/imingyu/ri.js#readme",
+  "devDependencies": {
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-es2015": "^6.22.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "rollup": "^0.41.4",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-json": "^2.1.0"
+  },
+  "dependencies": {}
+}

@@ -17,7 +17,7 @@
 
 
     <script src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-    <script src="../src/index.js"></script>
+    <script src="../dist/ri.js"></script>
     <script>
         $(function () {
             //模拟登录检查&登录弹出框
@@ -37,8 +37,8 @@
                 }
             };
             //定义一个Request工厂，并添加拦截器
-            var fac = new RequestFactory({
-                before: new RequestInterceptorSet('api.before').append('checkLogin', function () {
+            var fac = new RI.RequestFactory({
+                before: new RI.RequestInterceptorSet('api.before').append('checkLogin', function () {
                     var args = Array.from(arguments);
                     return new Promise((r, j) => {
                         if (LoginService.checkLogin()) {
@@ -55,7 +55,7 @@
                         }
                     });
                 }),
-                after: new RequestInterceptorSet('api.after').append('convertData', function (apiPromise) {
+                after: new RI.RequestInterceptorSet('api.after').append('convertData', function (apiPromise) {
                     return new Promise((r, j) => {
                         apiPromise.then((data) => {
                             r("格式化数据：" + JSON.stringify(data));
