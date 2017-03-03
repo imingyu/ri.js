@@ -86,18 +86,18 @@ export function RequestInterceptorSet(id) {
 
     this.parallel = function () {
         var args = Array.from(arguments),
-            ignoreInterceptors = args[0];
+            ignoreInterceptors = args[0] || [];
         args.splice(0, 1);//排除第一个参数
         return Promise.all($set.filter((item) => {
             return item.enabled && ignoreInterceptors.indexOf(item.name) === -1;
         }).map((item) => {
-            return item.handler.apply(item.context || null, args);
+            return item.handler.apply(null, args);
         }));
     }
 
     this.serial = function () {
         var args = Array.from(arguments),
-            ignoreInterceptors = args[0];
+            ignoreInterceptors = args[0] || [];
         args.splice(0, 1);//排除第一个参数
 
         var items = $set.filter((item) => {

@@ -54,6 +54,8 @@
                             })
                         }
                     });
+                }).append('c2',function(){
+                    return 3;
                 }),
                 after: new RI.RequestInterceptorSet('api.after').append('convertData', function (apiPromise) {
                     return new Promise((r, j) => {
@@ -104,6 +106,44 @@
                     $("#box").html(JSON.stringify(err));
                 });
             });
+        });
+
+
+        var s2 = new RI.RequestInterceptorSet('s2').append('s201', function () {
+            return 1;
+        }).append('s202', function () {
+            return new Promise((r, j) => {
+                setTimeout(() => {
+                    j("error");
+                }, 0.2 * 1000);
+            });
+        }).append('s203', function () {
+            return new Promise((r, j) => {
+                setTimeout(() => {
+                    r("success");
+                }, 0.3 * 1000);
+            }).then((msg) => {
+                return msg + "--";
+            });
+        }).append('s204', function () {
+            return new Promise((r, j) => {
+                setTimeout(() => {
+                    j("error2");
+                }, 0.3 * 1000);
+            });
+        });
+
+        s2.parallel().then((msg) => {
+            console.log(`one then msg=${msg}`);
+        }).catch((msg) => {
+            console.log(`one catch msg=${msg}`);
+        });
+
+        //s2.disable('s202');
+        s2.parallel().then((msg) => {
+            console.log(`two then msg=${msg}`);
+        }).catch((msg) => {
+            console.log(`two catch msg=${msg}`);
         });
     </script>
 </body>

@@ -2,3 +2,4 @@ build
 src
 .gitignore
 npm-debug.log
+.travis.yml
