@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button type="button" id="login">登录</button>
+    <button type="button" id="logout">登出</button>
+
+    <button type="button" id="info">获取用户信息</button>
+    <div id="box"></div>
+
+
+    <script src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../src/index.js"></script>
+    <script>
+        $(function () {
+            //模拟登录检查&登录弹出框
+            var LoginService = {
+                checkLogin() {
+                    return !!localStorage.getItem('isLogin');
+                },
+                login() {
+                    return new Promise((resolve, reject) => {
+                        if (confirm("模拟登录，你已经输入了账号密码，并且登录成功")) {
+                            localStorage.getItem('isLogin', '1');
+                            resolve();
+                        } else {
+                            reject();
+                        }
+                    });
+                }
+            };
+            //定义一个Request工厂，并添加拦截器
+            var fac = new RequestFactory({
+                before: new RequestInterceptorSet('api.before').append('checkLogin', function () {
+                    var args = Array.from(arguments);
+                    return new Promise((r, j) => {
+                        if (LoginService.checkLogin()) {
+                            r();
+                        } else {
+                            LoginService.login().then(() => {
+                                r();
+                            }).catch(() => {
+                                j({
+                                    code: '401',
+                                    message: "你还未登录，无法进行此操作！"
+                                });
+                            })
+                        }
+                    });
+                }),
+                after: new RequestInterceptorSet('api.after').append('convertData', function (apiPromise) {
+                    return new Promise((r, j) => {
+                        apiPromise.then((data) => {
+                            r("格式化数据：" + JSON.stringify(data));
+                        }).catch((err) => {
+                            j(err);
+                        })
+                    });
+                }).append('convertData3', function (data) {
+                    return new Promise((r, j) => {
+                        r("屏蔽关键字：" + data);
+                    });
+                }).append('convertData2', function (data) {
+                    return new Promise((r, j) => {
+                        r("安全性处理：" + data);
+                    });
+                })
+            });
+
+            //创建一个Request
+            var getUserInfo = fac.createRequest(function (dataModel) {
+                return new Promise((r, j) => {
+                    setTimeout(function () {
+                        r({
+                            code: 0,
+                            result: {
+                                name: "Tom",
+                                age: 20
+                            }
+                        })
+                    }, 2 * 1000);
+                });
+            });
+
+            $("#login").click(function () {
+                localStorage.setItem('isLogin', '1');
+            });
+            $("#logout").click(function () {
+                localStorage.removeItem('isLogin');
+            });
+
+            $("#info").click(function () {
+                $("#box").html("请求中...");
+                getUserInfo().then((data) => {
+                    $("#box").html(JSON.stringify(data));
+                }).catch(function (err) {
+                    $("#box").html(JSON.stringify(err));
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
